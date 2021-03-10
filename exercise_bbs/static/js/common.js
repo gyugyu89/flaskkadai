@@ -342,7 +342,7 @@ $(function () {  // ここはお約束
   // });
 
 
-// 削除する時にダイアログを出すやつ
+// 削除する時にダイアログを出すやつ 参考：https://www.flatflag.nir87.com/alert-2202#confirm
   // 削除ボタンをクリックするとイベント発動
   $('#deletebtn').on('click', function() {
     // もしキャンセルをクリックしたら
@@ -353,6 +353,23 @@ $(function () {  // ここはお約束
     } else {
       // HTMLに完了メッセージを表示 一瞬で消えるからいらない気がする1行
       $('p').text(' ');
+    }
+  });
+
+// 画像のアップロード 参考：https://iiiso.ti-da.net/e9424241.html
+  $('#upload_img').on('change', function(){
+    var strFileInfo = $('#upload_img')[0].files[0];
+    if(strFileInfo && strFileInfo.type.match('image.*')){
+
+      $('#preview').remove();
+      $('#preview_area').append('<img id="preview" width="300" />');
+
+      fileReader = new FileReader();
+      fileReader.onload = function(event){
+        $('#preview').attr('src', event.target.result);
+      }
+
+      fileReader.readAsDataURL(strFileInfo);
     }
   });
 
