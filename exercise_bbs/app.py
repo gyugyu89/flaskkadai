@@ -168,7 +168,7 @@ def del_task():
     conn = sqlite3.connect('service.db')
     c = conn.cursor()
     #DELETE → 削除ボタンを押したらカラムに1を記入(UPDATEする)
-    c.execute("update bbs set flag = ? where id = ?", (flag,bbs_id))
+    c.execute("update bbs set flag = 1 where id = ?", (id,))
     conn.commit()
     c.close()
     return redirect("/bbs")
