@@ -16,6 +16,8 @@
   {% for item in comment_list %}
   <div class="bbs_content">
     <p>{{item["comment"]}}</p>
+    <!-- 時間表示 -->
+    <p>{{item["time"]}}</p>
       <a href="/edit/{{item['id']}}">編集</a>
       <form action="/del" method="post">
         <input type="hidden" name="comment_id" value="{{item['id']}}">

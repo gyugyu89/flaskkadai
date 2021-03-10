@@ -3,7 +3,9 @@ import sqlite3
 # flaskをimportしてflaskを使えるようにする
 from flask import Flask , render_template , request , redirect , session
 # appにFlaskを定義して使えるようにしています。Flask クラスのインスタンスを作って、 app という変数に代入しています。
-app = Flask(__name__)
+# datetimeをimport！
+from datetime import datetime
+pp = Flask(__name__)
 
 # Flask では標準で Flask.secret_key を設定すると、sessionを使うことができます。この時、Flask では session の内容を署名付きで Cookie に保存します。
 app.secret_key = 'sunabakoza'
@@ -86,12 +88,14 @@ def bbs():
         c.execute("select name from user where id = ?", (user_id,))
         # fetchoneはタプル型
         user_info = c.fetchone()
-        c.execute("select id,comment from bbs where userid = ? order by id", (user_id,))
+        # selectにtimeを追加
+        c.execute("select id,comment,time from bbs where userid = ? order by id", (user_id,))
         comment_list = []
         for row in c.fetchall():
-            comment_list.append({"id": row[0], "comment": row[1]})
-
+            comment_list.append({"id": row[0], "comment": row[1], "time": row[2]})
         c.close()
+        # comment_listの中身が表示されるか確認
+        print(comment_list)
         return render_template('bbs.html' , user_info = user_info , comment_list = comment_list)
     else:
         return redirect("/login")
@@ -102,10 +106,12 @@ def add():
     user_id = session['user_id']
     # フォームから入力されたアイテム名の取得
     comment = request.form.get("comment")
+    # 変数timeを追加！
+    time = datetime.now()
     conn = sqlite3.connect('service.db')
     c = conn.cursor()
     # DBにデータを追加する
-    c.execute("insert into bbs values(null,?,?)", (user_id, comment))
+    c.execute("insert into bbs values(null,?,?,?)", (user_id, comment, time))
     conn.commit()
     conn.close()
     return redirect('/bbs')
