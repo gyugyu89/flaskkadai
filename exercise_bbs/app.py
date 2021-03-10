@@ -86,11 +86,12 @@ def bbs():
         c.execute("select name from user where id = ?", (user_id,))
         # fetchoneはタプル型
         user_info = c.fetchone()
-        c.execute("select id,comment from bbs where userid = ? order by id", (user_id,))
+        # 削除ボタンを押されたコメントを表示しない
+        c.execute("select id,comment from bbs where userid = ? and flag = 0 order by id", (user_id,))
         comment_list = []
         for row in c.fetchall():
             comment_list.append({"id": row[0], "comment": row[1]})
-
+            print(row)
         c.close()
         return render_template('bbs.html' , user_info = user_info , comment_list = comment_list)
     else:
@@ -162,9 +163,12 @@ def del_task():
     # クッキーから user_id を取得
     id = request.form.get("comment_id")
     id = int(id)
-    conn = sqlite3.connect("service.db")
+    flag = 1
+    flag = int(flag)    
+    conn = sqlite3.connect('service.db')
     c = conn.cursor()
-    c.execute("delete from bbs where id = ?", (id,))
+    #DELETE → 削除ボタンを押したらカラムに1を記入(UPDATEする)
+    c.execute("update bbs set flag = ? where id = ?", (flag,bbs_id))
     conn.commit()
     c.close()
     return redirect("/bbs")
